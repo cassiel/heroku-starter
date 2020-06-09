@@ -60,7 +60,7 @@ Local run of server using:
 
 Create a free cluster. Firewall IP address restriction needs to be configured (use =0.0.0.0= for testing).
 
-The Python test script, and ~main.py~, expect ~DB_USER~, ~DB_PASS~ and ~DB_NAME~ in the environment. (Cluster is effectively hard-wired in the connection URL.) Set these up for Heroku (see below); for local testing using a remote database, use
+The Python test script, and ~main.py~, expect ~DB_CLUSTER~, ~DB_USER~, ~DB_PASS~ and ~DB_NAME~ in the environment. Set these up for Heroku (see below); for local testing using a remote database, use
 
 #+BEGIN_SRC shell-script
   DB_CLUSTER=[cluster_URL_part] DB_USER=[user] DB_PASS=[pass] DB_NAME=[name] python main.py
