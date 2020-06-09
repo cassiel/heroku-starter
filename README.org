@@ -18,33 +18,19 @@ Heroku setup (given a local repository with a buildpack project):
 Local Python environment setup:
 
 #+BEGIN_SRC shell-script
-  pipenv --python python3 install
+  python3 -m venv ~/Desktop/my-venv
+  . ~/Desktop/my-venv/bin/activate
 #+END_SRC
 
-Python dependencies:
+Primary Python dependencies:
 
 #+BEGIN_SRC shell-script
-  pipenv install flask
-  pipenv install gunicorn
-  pipenv install eventlet
-  pipenv install requests
+  pip install flask
+  pip install flask_cors
+  pip install gunicorn
+  pip install eventlet
+  pip install requests
 #+END_SRC
-
-Local run using:
-
-#+BEGIN_SRC shell-script
-  pipenv run python main.py
-#+END_SRC
-
-** Heroku Deployment
-
-Heroku environment variables needed:
-
-- ~ON_HEROKU~ (set to anything, such as =YES=) - though doesn't seem obligatory
-- ~DB_USER~
-- ~DB_PASS~ (see MongoDB below)
-
-Deployment: don't forget the =Procfile=!
 
 ** MongoDB (Local)
 
@@ -55,17 +41,45 @@ Run database locally in Terminal via =mongod --config /usr/local/etc/mongod.conf
 Python access: [[https://www.w3schools.com/python/python_mongodb_getstarted.asp]]. Install:
 
 #+BEGIN_SRC shell-script
-  pipenv install pymongo
+  pip install pymongo
 #+END_SRC
 
-Console tests with =db-test.py= etc.
+Console tests with =db-test.py=. With that set up for local database:
+
+#+BEGIN_SRC shell-script
+  DB_NAME=my_db python db-test.py
+#+END_SRC
+
+Local run of server using:
+
+#+BEGIN_SRC shell-script
+  DB_NAME=my_db python main.py
+#+END_SRC
 
 ** MongoDB Atlas
 
-Create a free cluster. (It might have to be located in region ~us-east-1~.) Firewall IP address restriction can be lifted later.
+Create a free cluster. Firewall IP address restriction needs to be configured (use =0.0.0.0= for testing).
 
-The Python test script, and ~main.py~, expect ~DB_USER~ and ~DB_PASS~ in the environment. Set these up for Heroku (see above); for local testing using a remote database, use
+The Python test script, and ~main.py~, expect ~DB_USER~, ~DB_PASS~ and ~DB_NAME~ in the environment. (Cluster is effectively hard-wired in the connection URL.) Set these up for Heroku (see below); for local testing using a remote database, use
 
 #+BEGIN_SRC shell-script
-  DB_USER=[user] DB_PASS=[pass] pipenv run python main.py
+  DB_CLUSTER=[cluster_URL_part] DB_USER=[user] DB_PASS=[pass] DB_NAME=[name] python main.py
 #+END_SRC
+
+** Heroku Deployment
+
+Save dependencies with
+
+#+BEGIN_SRC shell-script
+  pip freeze >requirements.txt
+#+END_SRC
+
+Heroku environment variables needed:
+
+- ~ON_HEROKU~ (set to anything, such as =YES=) - though doesn't seem obligatory
+- ~DB_CLUSTER~
+- ~DB_NAME~
+- ~DB_USER~
+- ~DB_PASS~ (see MongoDB below)
+
+Deployment: don't forget the =Procfile=!

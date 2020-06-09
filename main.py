@@ -11,23 +11,32 @@ import dns
 
 ON_HEROKU = "ON_HEROKU" in os.environ
 
-user = os.environ["DB_USER"]
-password = os.environ["DB_PASS"]
+if "DB_CLUSTER" in os.environ:
+    cluster = os.environ["DB_CLUSTER"]
+else:
+    cluster = ""
+
+if "DB_USER" in os.environ:
+    user = os.environ["DB_USER"]
+else:
+    user = ""
+
+if "DB_PASS" in os.environ:
+    password = os.environ["DB_PASS"]
+else:
+    password = ""
+
 database = os.environ["DB_NAME"]
 
 # Local database:
-#CONNECTION="mongodb://localhost:27017/"
+CONNECTION_LOCAL="mongodb://localhost:27017/"
 
 # MongoDB Atlas:
 CONNECTION_ATLAS=\
-    "mongodb+srv://%s:%s@cluster0-ay0js.mongodb.net/%s?retryWrites=true&w=majority" \
-    % (user, password, database)
+    "mongodb+srv://%s:%s@%s.mongodb.net/%s?retryWrites=true&w=majority" \
+    % (user, password, cluster, database)
 
-CONNECTION_MLAB=\
-    "mongodb://%s:%s@ds263248.mlab.com:63248/%s" \
-    % (user, password, database)
-
-CONNECTION=CONNECTION_MLAB
+CONNECTION=CONNECTION_ATLAS
 
 print(CONNECTION)
 
